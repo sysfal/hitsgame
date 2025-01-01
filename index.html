@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript" src="qrcode.js"></script>
+<style>
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.block {
+    height: 6.5cm;
+    width: 13cm;
+    background-color: white;
+    border-style: solid;
+    border-color: gray;
+    display: flex;
+    flex-direction: row;
+    break-inside: avoid;
+}
+
+.text {
+    display: flex;
+    flex-direction: column;
+    width: 6.5cm;
+    border-right: solid;
+    border-color: gray;
+    justify-content: center;
+    align-items: center;
+    justify-content: space-around;
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.artist {
+    font-weight: bold;
+}
+
+.title {
+    font-style: italic;
+}
+
+.year {
+    font-weight: bold;
+    font-size: 70px;
+}
+
+.qr {
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0px;
+}
+</style>
+</head>
+<body>
+<div id="songs" class="container"></div>
+</body>
+<script>
+    var songs = [
+    { artist: 'The Shadows', title: 'Apache', date: '25 August 1960', weeks: 5, url: 'https://open.spotify.com/track/0sZy1HE2aGBQABHfVRQ4jB?si=21cd576c61c14e44' },
+    { artist: 'The Marcels', title: 'Blue Moon', date: '4 May 1961', weeks: 2, url: 'https://open.spotify.com/track/42ojLX3UYsp4XhaX0sx29E?si=44d82dede48445e1' },
+    { artist: 'Elvis Presley', title: 'Can\'t Help Falling in Love', date: '22 February 1962', weeks: 4, url: 'https://open.spotify.com/track/44AyOl4qVkzS48vBsbNXaC?si=50cf75c6afad4085' },
+    { artist: 'Gerry and the Pacemakers', title: 'You\'ll Never Walk Alone', date: '31 October 1963', weeks: 4, url: 'https://open.spotify.com/track/6fSNK6QlZskYmKTvJnNH5P?si=6c3aaa978b704fcf' },
+    { artist: 'The Animals', title: 'The House of the Rising Sun', date: '9 July 1964', weeks: 1, url: 'https://open.spotify.com/track/3TETmhGNWOcquUTtcr6RIR?si=f191538519be4194' },
+    { artist: 'The Righteous Brothers', title: 'You\'ve Lost That Lovin\' Feelin\'', date: '4 February 1965', weeks: 2, url: 'https://open.spotify.com/track/6AeyHqzNHJthYJbn0tvJ4b?si=22db9a98d96543f0' },
+    { artist: 'Nancy Sinatra', title: 'These Boots Are Made for Walkin\'', date: '17 February 1966', weeks: 4, url: 'https://open.spotify.com/track/2HEgBBls7l0smWTxPx0MtZ?si=a34115e5279e431c' },
+    { artist: 'The Monkees', title: 'I\'m a Believer', date: '19 January 1967', weeks: 4, url: 'https://open.spotify.com/track/3G7tRC24Uh09Hmp1KZ7LQ2?si=b1c80859c900469c' },
+    { artist: 'Louis Armstrong', title: 'What a Wonderful World', date: '24 April 1968', weeks: 4, url: 'https://open.spotify.com/track/29U7stRjqHU6rMiS8BfaI9?si=ba61b524261342ac' },
+    { artist: 'Fleetwood Mac', title: 'Albatross', date: '29 January 1969', weeks: 1, url: 'https://open.spotify.com/track/3iZ5twPwvFeOUQA4Deu8tP?si=8b08f8a1b801478e' },
+    
+    { artist: 'Simon & Garfunkel', title: 'Bridge over Troubled Water', date: '28 March 1970', weeks: 3, url: 'https://open.spotify.com/track/6l8EbYRtQMgKOyc1gcDHF9?si=d4945fbdbdcd432b' },
+    { artist: 'T. Rex', title: 'Get It On', date: '24 July 1971', weeks: 4, url: 'https://open.spotify.com/track/0LoQuiekvzqx7n8flgEKzF?si=856aba15b3634fe0' },
+    { artist: 'Alice Cooper', title: 'School\'s Out', date: '12 August 1972', weeks: 3, url: 'https://open.spotify.com/track/5Z8EDau8uNcP1E8JvmfkZe?si=1884538a6f5e4d32' },
+    { artist: 'The Sweet', title: 'Blockbuster!', date: '27 January 1973', weeks: 5, url: 'https://open.spotify.com/track/6lImDMS6vAMyRRifk7Fabg?si=71891a94255a47cb' },
+    { artist: 'ABBA', title: 'Waterloo', date: '4 May 1974', weeks: 2, url: 'https://open.spotify.com/track/3Dy4REq8O09IlgiwuHQ3sk?si=5d6c79ae418742ce' },
+    { artist: 'Queen', title: 'Bohemian Rhapsody', date: '29 November 1975', weeks: 9, url: 'https://open.spotify.com/track/4u7EnebtmKWzUH433cf5Qv?si=81d707b5457d499f' },
+    { artist: 'The Wurzels', title: 'Combine Harvester', date: '12 June 1976', weeks: 2, url: 'https://open.spotify.com/track/7Jt2a7x7c1Mgm8Y5NQPCqp?si=610be01329dd43b2' },
+    { artist: 'Donna Summer', title: 'I Feel Love', date: '23 July 1977', weeks: 4, url: 'https://open.spotify.com/track/1vCBk33l9HaWp5FOnhSGxk?si=b127955ac03c430a' },
+    { artist: 'Bee Gees', title: 'Night Fever', date: '29 April 1978', weeks: 2, url: 'https://open.spotify.com/track/0qemIQjSxcKyf42VPfZnfa?si=51c8e3fa5a0e4e07' },
+    { artist: 'Pink Floyd', title: 'Another Brick in the Wall (Part II)', date: '15 December 1979', weeks: 5, url: 'https://open.spotify.com/track/3b6LAwj9lhGpGOW0aSrghk?si=b15f67ecc8c54218' },
+
+    { artist: 'Blondie', title: 'Atomic', date: '1 March 1980', weeks: 2, url: 'https://open.spotify.com/track/5QIbR39hAEDIOkr4ggh4xc?si=052fbcc9d34c4138' },
+    { artist: 'The Human League', title: 'Don\'t You Want Me', date: '12 December 1981', weeks: 5, url: 'https://open.spotify.com/track/3L7RtEcu1Hw3OXrpnthngx?si=deadfbac4f544248' },
+    { artist: 'Survivor', title: 'Eye of the Tiger', date: '4 September 1982', weeks: 4, url: 'https://open.spotify.com/track/2KH16WveTQWT6KOG9Rg6e2?si=f55c02da30de400d' },
+    { artist: 'Culture Club', title: 'Karma Chameleon', date: '24 September 1983', weeks: 6, url: 'https://open.spotify.com/track/48O0GrGJWml3DzHhC5sJ7a?si=632bedb3ac33418c' },
+    { artist: 'Frankie Goes to Hollywood', title: 'Relax', date: '28 January 1984', weeks: 5, url: 'https://open.spotify.com/track/2K22nUTdyr48JDwI5t906t?si=1d893c8706d74b47' },
+    { artist: 'Madonna', title: 'Into the Groove', date: '3 August 1985', weeks: 4, url: 'https://open.spotify.com/track/2m0M7YqCy4lXfedh18qd8N?si=428e530a31ba40ff' },
+    { artist: 'Europe', title: 'The Final Countdown', date: '6 December 1986', weeks: 2, url: 'https://open.spotify.com/track/3MrRksHupTVEQ7YbA0FsZK?si=a5c9a59392904fce' },
+    { artist: 'Pet Shop Boys', title: 'It\'s a Sin', date: '4 July 1987', weeks: 3, url: 'https://open.spotify.com/track/3GNwCZIv4xKUiyoaQfj9Ah?si=82f32cd7487843b2' },
+    { artist: 'Kylie Minogue', title: 'I Should Be So Lucky', date: '20 February 1988', weeks: 5, url: 'https://open.spotify.com/track/0RggFSMfsJvAsrI4itTIzr?si=370644edbcd647a5' },
+    { artist: 'Black Box', title: 'Ride on Time', date: '9 September 1989', weeks: 6, url: 'https://open.spotify.com/track/3pgainA2dH9c7e8JVYGRCN?si=d1a778075edf4b3b' },
+
+    { artist: 'Snap!', title: 'The Power', date: '31 March 1990', weeks: 2, url: 'https://open.spotify.com/track/0gRhXiFgrIz8OfSW4up1k1?si=68ca5bf2fe1c45d2' },
+    { artist: 'The KLF', title: '3 a.m. Eternal', date: '2 February 1991', weeks: 2, url: 'https://open.spotify.com/track/0ldLTYuqnHU92weLtw6W9m?si=8f24b78e1fe746c0' },
+    { artist: 'Shakespears Sister', title: 'Stay', date: '22 February 1992', weeks: 8, url: 'https://open.spotify.com/track/6Mcoqi1iK28djC2EClVwDj?si=74b0c8c4be9b4078' },
+    { artist: 'Ace of Base', title: 'All That She Wants', date: '22 May 1993', weeks: 3, url: 'https://open.spotify.com/track/6kWJvPfC4DgUpRsXKNa9z9?si=0a0e85da3fcd432d' },
+    { artist: 'D:Ream', title: 'Things Can Only Get Better', date: '22 January 1994', weeks: 4, url: 'https://open.spotify.com/track/5HmwYfynpGAjgrj4bp9eMy?si=feccce5718d24c86' },
+    { artist: 'Blur', title: 'Country House', date: '26 August 1995', weeks: 2, url: 'https://open.spotify.com/track/4vnYwFOZCVl0bmerWyuzRw?si=8a991366ca3e4956' },
+    { artist: 'Babylon Zoo', title: 'Spaceman', date: '27 January 1996', weeks: 5, url: 'https://open.spotify.com/track/0uQcP7QVoLvaFsORsdrgNh?si=e024f145bd7b4491' },
+    { artist: 'Olive', title: 'You\'re Not Alone', date: '17 May 1997', weeks: 2, url: 'https://open.spotify.com/track/0L5oYrkC94ArMJDmjtvJWC?si=f908981a386f4584' },
+    { artist: 'Cornershop', title: 'Brimful of Asha', date: '28 February 1998', weeks: 1, url: 'https://open.spotify.com/track/3RNUFPrfUVeOhd6wcKnf6z?si=5be2f8fe52d34816' },
+    { artist: 'Fatboy Slim', title: 'Praise You', date: '16 January 1999', weeks: 1, url: 'https://open.spotify.com/track/1FS21kclHQ2vVi3U1ZxETc?si=6988efb72fcf4ec1' },
+
+    { artist: 'Spiller', title: 'Groovejet (If This Ain\'t Love)', date: '26 August 2000', weeks: 1, url: 'https://open.spotify.com/track/5ydeCNaWDmFbu4zl0roPAH?si=a096dca48cf24449' },
+    { artist: 'Destiny\'s Child', title: 'Survivor', date: '28 April 2001', weeks: 1, url: 'https://open.spotify.com/track/7qtAgn9mwxygsPOsUDVRRt?si=8e077f3220444d62' },
+    { artist: 'Sugababes', title: 'Round Round', date: '24 August 2002', weeks: 1, url: 'https://open.spotify.com/track/5O2Ft5ENCfAh6JCgykJs76?si=8b782806e87e436a' },
+    { artist: 't.A.T.u.', title: 'All the Things She Said', date: '8 February 2003', weeks: 4, url: 'https://open.spotify.com/track/4bJygwUKrRgq1stlNXcgMg?si=c9460a287b874b12' },
+    { artist: 'Britney Spears', title: 'Toxic', date: '13 March 2004', weeks: 1 , url:'https://open.spotify.com/track/6I9VzXrHxO9rA9A5euc8Ak?si=e32a877970284878' },
+    { artist: 'James Blunt', title: 'You\'re Beautiful', date: '23 July 2005', weeks: 5, url: 'https://open.spotify.com/track/0vg4WnUWvze6pBOJDTq99k?si=5ba4f024a5254f75' },
+    { artist: 'Arctic Monkeys', title: 'When the Sun Goes Down', date: '28 January 2006', weeks: 1, url: 'https://open.spotify.com/track/2zzLRQ78kKfPTx8FJQCdC2?si=f2cee3eb68a94c7b' },
+    { artist: 'Kaiser Chiefs', title: 'Ruby', date: '3 March 2007', weeks: 1, url: 'https://open.spotify.com/track/2sgBTNHz9ckmqj3rx3ez4M?si=dbdf473850ca434c' },
+    { artist: 'Coldplay', title: 'Viva la Vida', date: '28 June 2008', weeks: 1, url: 'https://open.spotify.com/track/4zOfy9kqJlG0ZXvcaSh4gv?si=d4122b5e02e44e34' },
+    { artist: 'Lady Gaga', title: 'Poker Face', date: '28 March 2009', weeks: 3, url: 'https://open.spotify.com/track/1QV6tiMFM6fSOKOGLMHYYg?si=7272ba01b7ee4f7f' },
+
+    { artist: 'Bruno Mars', title: 'Just the Way You Are (Amazing)', date: '2 October 2010', weeks: 1, url: 'https://open.spotify.com/track/3v9fY5pJUVQDu6ijUDCDan?si=15dc900cea5747bb' },
+    { artist: 'Adele', title: 'Someone Like You', date: '26 February 2011', weeks: 4, url: 'https://open.spotify.com/track/3bNv3VuUOKgrf5hu3YcuRo?si=c690b02a061d4c15' },
+    { artist: 'Gotye featuring Kimbra', title: 'Somebody That I Used to Know', date: '18 February 2012', weeks: 1, url: 'https://open.spotify.com/track/1qDrWA6lyx8cLECdZE7TV7?si=b71c37ae623f4546' },
+    { artist: 'Daft Punk featuring Pharrell Williams', title: 'Get Lucky', date: '4 May 2013', weeks: 4, url: 'https://open.spotify.com/track/2Foc5Q5nqNiosCNqttzHof?si=1f3ae52f8ae74f41' },
+    { artist: 'Pharrell Williams', title: 'Happy', date: '4 January 2014', weeks: 1, url: 'https://open.spotify.com/track/60nZcImufyMA1MKQY3dcCH?si=24abfb802c5b4ccb' },
+    { artist: 'Mark Ronson featuring Bruno Mars', title: 'Uptown Funk', date: '3 January 2015', weeks: 6, url: 'https://open.spotify.com/track/32OlwWuMpZ6b0aN2RZOeMS?si=96e2fa5a596b4791' },
+    { artist: 'Little Mix', title: 'Shout Out to My Ex', date: '27 October 2016', weeks: 3, url: 'https://open.spotify.com/track/0ErK6K0kYr0Ow2RkPMhmMs?si=9f95bdce32e84358' },
+    { artist: 'Dua Lipa', title: 'New Rules', date: '24 August 2017', weeks: 2, url: 'https://open.spotify.com/track/4LihUZcWy0B6lGLqcJ8u9B?si=88e1eda2eb72428a' },
+    { artist: 'George Ezra', title: 'Shotgun', date: '5 July 2018', weeks: 2, url: 'https://open.spotify.com/track/4ofwffwvvnbSkrMSCKQDaC?si=c2616e178ba84fee' },
+    { artist: 'Tones and I', title: 'Dance Monkey', date: '10 October 2019', weeks: 11, url: 'https://open.spotify.com/track/2XU0oxnq2qxCpomAAuJY8K?si=81f39e7608574f36' },
+
+    { artist: 'The Weeknd', title: 'Blinding Lights', date: '13 February 2020', weeks: 2, url: 'https://open.spotify.com/track/0VjIjW4GlUZAMYd2vXMi3b?si=5602211ae26a441f' },
+    { artist: 'Ed Sheeran', title: 'Bad Habits', date: '8 July 2021', weeks: 11, url: 'https://open.spotify.com/track/3rmo8F54jFF8OgYsqTxm5d?si=4dbad4e5f0e1404d' },
+    { artist: 'Harry Styles', title: 'As It Was', date: '14 April 2022', weeks: 10, url: 'https://open.spotify.com/track/4Dvkj6JhhA12EX05fT7y2e?si=b9da378e4a2b425a' },
+    { artist: 'Miley Cyrus', title: 'Flowers', date: '26 January 2023', weeks: 10, url: 'https://open.spotify.com/track/7DSAEUvxU8FajXtRloy8M0?si=8be8529262e84d8d' },
+    { artist: 'Noah Kahan', title: 'Stick Season', date: '11 January 2024', weeks: 7, url: 'https://open.spotify.com/track/0mflMxspEfB0VbI1kyLiAv?si=f6e03db812294a77' },
+];
+
+    var s = document.getElementById("songs");
+    var arrayLength = songs.length;
+    for (var i = 0; i < arrayLength; i++) {
+        console.log(songs[i]);
+        //Do something
+        var iDiv = document.createElement('div');
+        iDiv.id = 'block';
+        iDiv.className = 'block';
+
+        var text = document.createElement('div');
+        text.className = 'text';
+        iDiv.appendChild(text);
+
+        var artist = document.createElement('div');
+        artist.className = 'artist';
+        artist.innerText = songs[i].artist;
+        text.appendChild(artist);
+
+        var date = document.createElement('div');
+        text.appendChild(date);
+
+        const time = new Date(songs[i].date);
+        const yearText = time.getFullYear();
+        var monthText = time.getDate() + ' ' + time.toLocaleString('default', { month: 'short' });
+        console.log(month);
+        var year = document.createElement('div');
+        year.className = 'year';
+        year.innerText = yearText;
+        date.appendChild(year);
+        var month = document.createElement('div');
+        month.className = 'month';
+        month.innerText = monthText;
+        date.appendChild(month);
+
+        var title = document.createElement('div');
+        title.className = 'title';
+        title.innerText = songs[i].title;
+        text.appendChild(title);
+
+        var qr = document.createElement('div');
+        qr.className = 'qr';
+        var qrcode = new QRCode(qr, {
+            width : 100,
+            height : 100
+        });
+        qrcode.makeCode(songs[i].url);
+        iDiv.appendChild(qr);
+
+        s.appendChild(iDiv);
+    }
+</script>
+</html>
